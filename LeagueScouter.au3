@@ -30,8 +30,9 @@ GUICreate("Champion Counter", 450, 500, @DesktopWidth / 2 + 200, @DesktopHeight 
 			Case $iChampionSelection
 				;~ 	Read inputs
 				Local $sChampion = GUICtrlRead($iChampionSelection)
-				GetCounterInfo()
-
+				If $sChampion <> "Champion" Then
+					GetCounterInfo()
+				EndIf
 ;~             Case $idBtn
 ;~ 				If $sSourceXML == "" Or $sOrderID == "" Or $sConsumerDirectory == "" Then
 ;~ 					MsgBox(0,"", "Fields cannot be empty")
@@ -46,6 +47,48 @@ GUICreate("Champion Counter", 450, 500, @DesktopWidth / 2 + 200, @DesktopHeight 
 
 
 
+Func GetMasteryKeyStoneInfo($aMasteryList)
+
+	Local $sMasteryURL
+	For $i = 0 To UBound($aMasteryList) - 1
+		Switch $aMasteryList[$i]
+			;Ferocity Tree
+			Case "6161" ;Warlord's Bloodlust
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/6/6d/Mastery_Warlord%27s_Bloodlust.png/50px-Mastery_Warlord%27s_Bloodlust.png'
+			Case "6162" ;Fervor of Battle
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/4/4b/Mastery_Fervor_of_Battle.png/50px-Mastery_Fervor_of_Battle.png'
+			Case "6164" ;Deathfire Touch
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/5/5e/Mastery_Deathfire_Touch.png/50px-Mastery_Deathfire_Touch.png'
+
+			;Cunning Tree
+			Case "6361" ;Stormraider's Surge
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/a/aa/Mastery_Stormraider%27s_Surge.png/50px-Mastery_Stormraider%27s_Surge.png'
+			Case "6362" ;Thunderlord's Decree
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/8/84/Mastery_Thunderlord%27s_Decree.png/50px-Mastery_Thunderlord%27s_Decree.png'
+			Case "6363" ;Windspeaker's Blessing
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/7/71/Mastery_Windspeaker%27s_Blessing.png/50px-Mastery_Windspeaker%27s_Blessing.png'
+
+			;Resolve Tree
+			Case "6261" ;Grasp of the Undying
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/a/a0/Mastery_Grasp_of_the_Undying.png/50px-Mastery_Grasp_of_the_Undying.png'
+			Case "6262" ;Strength of the Ages
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/6/60/Mastery_Strength_of_the_Ages.png/50px-Mastery_Strength_of_the_Ages.png'
+			Case "6263" ;Bond of Stone
+				$sKeyStoneMastery = $aMasteryList[$i]
+				$sMasteryURL = 'http://lol.esportspedia.com/w/images/thumb/e/e2/Mastery_Bond_of_Stone.png/50px-Mastery_Bond_of_Stone.png'
+		EndSwitch
+	Next
+	Return $sMasteryURL
+EndFunc
+
 
 
 
@@ -54,22 +97,48 @@ Func GetCounterInfo()
 
 ;~     Local $sFile
 ;~     GUICreate("_GetURLImage()", 320, 115)
-    $sFile = _GetURLImage("http://leagueoflegends.wikia.com/wiki/Category:Champion_squares?file=AatroxSquare.png", @TempDir)
+;~     $sFile = _GetURLImage("http://leagueoflegends.wikia.com/wiki/Category:Champion_squares?file=AatroxSquare.png", @TempDir)
 ;~     If @error = 0 Then
 ;~         0xFF0000($sFile, 0, 0, 320, 115, BitOR($SS_NOTIFY, $WS_GROUP, $WS_CLIPSIBLINGS)) ; Make Sure You Set The Correct Width & Height.
 ;~     EndIf
 
 
+;~ ;===Modify Champion selected for use in URL===
+	;Removes spaces and periods
+	$sChampion = StringReplace(StringReplace($sChampion, " ", ""), ".", "")
+
+	;Removes apostrohpe in Champion names (ie. Vel'Koz, Cho'Gath)
+	If StringInStr($sChampion,"'") Then
+		$sChampion = StringReplace($sChampion, "'", "")
+		$sChampion = StringLeft($sChampion,1) & StringLower(StringMid($sChampion,2))
+		MsgBox(0,'',$sChampion)
+	EndIf
+
+	$sWeak = _INetGetSource('http://www.lolcounter.com/champions/' & $sChampion & '/weak')
+	$sStrong = _INetGetSource('http://www.lolcounter.com/champions/' & $sChampion & '/strong')
+	$sMostFrequentMastery = _INetGetSource('https://champion.gg/champion/' & $sChampion)
+
+	$aBetweenWeak = _StringBetween($sWeak, "a class='left' href='/champions/", "'><div")
+	$aBetweenStrong = _StringBetween($sStrong, "a class='left' href='/champions/", "'><div")
 
 
-$sWeak = _INetGetSource('http://www.lolcounter.com/champions/' & $sChampion & '/weak')
-$sStrong = _INetGetSource('http://www.lolcounter.com/champions/' & $sChampion & '/strong')
-
-$aBetweenWeak = _StringBetween($sWeak, "a class='left' href='/champions/", "'><div")
-$aBetweenStrong = _StringBetween($sStrong, "a class='left' href='/champions/", "'><div")
+	$aMasteryList = _StringBetween($sMostFrequentMastery, ' mastery-active" champion-tip api-type="masteries" api-primary-id="',  '" api-secondary-id="')
 
 
-$idListview = GUICtrlCreateListView("", 2, 2, 210, 425)
+
+
+;~ 		For $i = 0 To UBound($aMasteryList) - 1
+;~ 			$aMasteryList[$i] = StringLeft($aMasteryList[$i], 4)
+;~ 		Next
+
+
+
+
+
+
+
+	$idListview = GUICtrlCreateListView("", 2, 2, 210, 425)
+
   ; Enable extended control styles
     _GUICtrlListView_SetExtendedListViewStyle($idListview, BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_SUBITEMIMAGES))
 
@@ -77,12 +146,37 @@ $idListview = GUICtrlCreateListView("", 2, 2, 210, 425)
 
 	_GDIPlus_Startup()
 	Local  $STM_SETIMAGE = 0x0172
-	Local $hBmp = _GDIPlus_BitmapCreateFromMemory(InetRead("https://raw.githubusercontent.com/Gravebot/Gravebot/master/web/images/leagueoflegends/champs/" & StringLower($sChampion) & ".png"), True) ;to load an image from the net
+
+	Local $hBmp = _GDIPlus_BitmapCreateFromMemory(InetRead("https://ddragon.leagueoflegends.com/cdn/6.8.1/img/champion/" & $sChampion & ".png"), True) ;to load an image from the net
+;~ 	Local $hBmp = _GDIPlus_BitmapCreateFromMemory(InetRead("https://raw.githubusercontent.com/Gravebot/Gravebot/master/web/images/leagueoflegends/champs/" & StringLower($sChampion) & ".png"), True) ;to load an image from the net
 	Global  $hBitmap = _GDIPlus_BitmapCreateFromHBITMAP($hBmp)
 	Global  $iWidth = _GDIPlus_ImageGetWidth($hBitmap)
 	Global  $iHeight = _GDIPlus_ImageGetHeight($hBitmap)
 	Global  $idPic = GUICtrlCreatePic("", 250, 150, $iWidth, $iHeight)
 	_WinAPI_DeleteObject(GUICtrlSendMsg($idPic, $STM_SETIMAGE, $IMAGE_BITMAP, $hBmp))
+
+
+
+	Local $sMasteryURL = ""
+	Local $aFrequentMasteryList[10]
+	Local $aMostWinsMasteryList[10]
+
+
+;~ 	Find/Load KeyStoneMastery images
+
+	For $i = 0 To UBound($aMasteryList)/2 - 1
+
+		$aFrequentMasteryList[$i] = $aMasteryList[$i]
+		$aMostWinsMasteryList[$i] = $aMasteryList[$i+5]
+	Next
+
+	$sMasteryURL = GetMasteryKeyStoneInfo($aFrequentMasteryList)
+
+	If $sMasteryURL <> "" Then
+		GetPNGFromURL($sMasteryURL)
+	EndIf
+
+;~ 	_ArrayDisplay($aFrequentMasteryList, "1D display")
 
 
 
@@ -147,7 +241,15 @@ $idListview = GUICtrlCreateListView("", 2, 2, 210, 425)
 EndFunc
 
 
-
+Func GetPNGFromURL($sMasteryURL)
+	Local  $STM_SETIMAGE = 0x0172
+	Local $hBmp = _GDIPlus_BitmapCreateFromMemory(InetRead($sMasteryURL), True) ;to load an image from the net
+	Global  $hBitmap = _GDIPlus_BitmapCreateFromHBITMAP($hBmp)
+	Global  $iWidth = _GDIPlus_ImageGetWidth($hBitmap)
+	Global  $iHeight = _GDIPlus_ImageGetHeight($hBitmap)
+	Global  $idPic = GUICtrlCreatePic("", 250, 150, $iWidth, $iHeight)
+	_WinAPI_DeleteObject(GUICtrlSendMsg($idPic, $STM_SETIMAGE, $IMAGE_BITMAP, $hBmp))
+EndFunc
 
 
 Func _GetURLImage($sURL, $sDirectory = @ScriptDir)
