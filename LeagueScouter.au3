@@ -5,6 +5,8 @@
 #include <GuiListView.au3>
 #include <GuiImageList.au3>
 #include <WindowsConstants.au3>
+#include <GDIPlus.au3>
+#include <WinAPIFiles.au3>
 
 $sListOfChampions = "Aatrox|Ahri|Akali|Alistar|Amumu|Anivia|Annie|Ashe|Aurelion Sol|Azir|Bard|Blitzcrank|Brand|Braum|Caitlyn|Cassiopeia|Cho'Gath|Corki|Darius|Diana|Dr. Mundo|Draven|Ekko|Elise|Evelynn|Ezreal|Fiddlesticks|Fiora|Fizz|Galio|Gangplank|Garen|Gnar|Gragas|Graves|Hecarim|Heimerdinger|Illaoi|Irelia|Janna|Jarvan IV|Jax|Jayce|Jhin|Jinx|Kalista|Karma|Karthus|Kassadin|Katarina|Kayle|Kennen|Kha'Zix|Kindred|Kog'Maw|LeBlanc|Lee Sin|Leona|Lissandra|Lucian|Lulu|Lux|Malphite|Malzahar|Maokai|Master Yi|Miss Fortune|Mordekaiser|Morgana|Nami|Nasus|Nautilus|Nidalee|Nocturne|Nunu|Olaf|Orianna|Pantheon|Poppy|Quinn|Rammus|Rek'Sai|Renekton|Rengar|Riven|Rumble|Ryze|Sejuani|Shaco|Shen|Shyvana|Singed|Sion|Sivir|Skarner|Sona|Soraka|Swain|Syndra|Tahm Kench|Talon|Taric|Teemo|Thresh|Tristana|Trundle|Tryndamere|Twisted Fate|Twitch|Udyr|Urgot|Varus|Vayne|Veigar|Vel'Koz|Vi|Viktor|Vladimir|Volibear|Warwick|Wukong|Xerath|Xin Zhao|Yasuo|Yorick|Zac|Zed|Ziggs|Zilean|Zyra"
 
@@ -52,7 +54,7 @@ Func GetCounterInfo()
 
 ;~     Local $sFile
 ;~     GUICreate("_GetURLImage()", 320, 115)
-;~     $sFile = _GetURLImage("http://leagueoflegends.wikia.com/wiki/Category:Champion_squares?file=AatroxSquare.png", @TempDir)
+    $sFile = _GetURLImage("http://leagueoflegends.wikia.com/wiki/Category:Champion_squares?file=AatroxSquare.png", @TempDir)
 ;~     If @error = 0 Then
 ;~         0xFF0000($sFile, 0, 0, 320, 115, BitOR($SS_NOTIFY, $WS_GROUP, $WS_CLIPSIBLINGS)) ; Make Sure You Set The Correct Width & Height.
 ;~     EndIf
@@ -73,38 +75,55 @@ $idListview = GUICtrlCreateListView("", 2, 2, 210, 425)
 
 
 
-	$image_pic = GUICtrlCreatePic("", 150, 150, 245, 245)
+	_GDIPlus_Startup()
+	Local  $STM_SETIMAGE = 0x0172
+	Local $hBmp = _GDIPlus_BitmapCreateFromMemory(InetRead("https://raw.githubusercontent.com/Gravebot/Gravebot/master/web/images/leagueoflegends/champs/" & StringLower($sChampion) & ".png"), True) ;to load an image from the net
+	Global  $hBitmap = _GDIPlus_BitmapCreateFromHBITMAP($hBmp)
+	Global  $iWidth = _GDIPlus_ImageGetWidth($hBitmap)
+	Global  $iHeight = _GDIPlus_ImageGetHeight($hBitmap)
+	Global  $idPic = GUICtrlCreatePic("", 250, 150, $iWidth, $iHeight)
+	_WinAPI_DeleteObject(GUICtrlSendMsg($idPic, $STM_SETIMAGE, $IMAGE_BITMAP, $hBmp))
+
+
+
+;~     ; Download the file in the background with the selected option of 'force a reload from the remote site.'
+;~     Local $hDownload = InetGet("https://raw.githubusercontent.com/Gravebot/Gravebot/master/web/images/leagueoflegends/champs/aatrox.png", $sFilePath, $INET_FORCERELOAD, $INET_DOWNLOADBACKGROUND)
+
+;~  ; Wait for the download to complete by monitoring when the 2nd index value of InetGetInfo returns True.
+;~     Do
+;~         Sleep(250)
+;~     Until InetGetInfo($hDownload, $INET_DOWNLOADCOMPLETE)
+
+;~     ; Retrieve the number of total bytes received and the filesize.
+;~     Local $iBytesSize = InetGetInfo($hDownload, $INET_DOWNLOADREAD)
+;~     Local $iFileSize = FileGetSize($sFilePath)
+;~    ; Close the handle returned by InetGet.
+;~     InetClose($hDownload)
+
+;~     ; Display details about the total number of bytes read and the filesize.
+;~     MsgBox($MB_SYSTEMMODAL, "", "The total download size: " & $iBytesSize & @CRLF & _
+;~             "The total filesize: " & $iFileSize)
+
+
+
+
 
 
     GUISetState(@SW_SHOW)
 
 
-;~             $url = "http://www.autoitscript.com/autoit3/files/graphics/autoit9_wall_thumb.jpg"
-			$url = "http://vignette4.wikia.nocookie.net/leagueoflegends/images/7/79/Portrait_Blitz1.jpg/revision/latest?cb=20110310063538"
-            InetGet($url, @ScriptDir & "\temp.jpg")
 
 
-            GUICtrlSetImage($image_pic, @ScriptDir & "\temp.jpg")
 
 
-;~             $url = "http://leagueoflegends.wikia.com/wiki/File:Portrait_Blitz1.jpg"
+;~ 	GUICtrlSetImage($image_pic, @ScriptDir&"\"&$sFilePath)
 
 
 
     ; Load images
-
-;~ 	'http://leagueoflegends.wikia.com/wiki/Category:Champion_squares?file=AatroxSquare.png'
-;~ 	$hImage = $sFile
-;~ 	'http://leagueoflegends.wikia.com/wiki/Category:Champion_squares?file=' & $sChampion & 'Square.png'
-
-    $hImage = _GUIImageList_Create()
-
-
-;~ 	_GUIImageList_AddIcon ($hImage, "btn_newFile.ico")
-;~ 	_GUIImageList_AddIcon($hImage, $sFile, 131)
-;~  need
-;~     _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview), 0xFF0000, 16, 16))
-;~     _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview), 0x00FF00, 16, 16))
+	$hImage = _GUIImageList_Create()
+    _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview), 0xFF0000, 16, 16))
+    _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview), 0x00FF00, 16, 16))
 
     _GUICtrlListView_SetImageList($idListview, $hImage, 1)
 
