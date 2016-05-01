@@ -1,4 +1,5 @@
 
+
 #include <Inet.au3>
 #include <String.au3>
 #include <Array.au3>
@@ -8,62 +9,38 @@
 #include <WindowsConstants.au3>
 #include <GDIPlus.au3>
 #include <WinAPIFiles.au3>
-
+#include <StaticConstants.au3>
 $sListOfChampions = "Aatrox|Ahri|Akali|Alistar|Amumu|Anivia|Annie|Ashe|Aurelion Sol|Azir|Bard|Blitzcrank|Brand|Braum|Caitlyn|Cassiopeia|Cho'Gath|Corki|Darius|Diana|Dr. Mundo|Draven|Ekko|Elise|Evelynn|Ezreal|Fiddlesticks|Fiora|Fizz|Galio|Gangplank|Garen|Gnar|Gragas|Graves|Hecarim|Heimerdinger|Illaoi|Irelia|Janna|Jarvan IV|Jax|Jayce|Jhin|Jinx|Kalista|Karma|Karthus|Kassadin|Katarina|Kayle|Kennen|Kha'Zix|Kindred|Kog'Maw|LeBlanc|Lee Sin|Leona|Lissandra|Lucian|Lulu|Lux|Malphite|Malzahar|Maokai|Master Yi|Miss Fortune|Mordekaiser|Morgana|Nami|Nasus|Nautilus|Nidalee|Nocturne|Nunu|Olaf|Orianna|Pantheon|Poppy|Quinn|Rammus|Rek'Sai|Renekton|Rengar|Riven|Rumble|Ryze|Sejuani|Shaco|Shen|Shyvana|Singed|Sion|Sivir|Skarner|Sona|Soraka|Swain|Syndra|Tahm Kench|Talon|Taric|Teemo|Thresh|Tristana|Trundle|Tryndamere|Twisted Fate|Twitch|Udyr|Urgot|Varus|Vayne|Veigar|Vel'Koz|Vi|Viktor|Vladimir|Volibear|Warwick|Wukong|Xerath|Xin Zhao|Yasuo|Yorick|Zac|Zed|Ziggs|Zilean|Zyra"
 
 
+$hMainGUI = GUICreate("Champion Counter", 450, 500, @DesktopWidth / 2 + 200, @DesktopHeight / 2 - 400, -1, $WS_EX_TOPMOST)
 
 
+	Local $iChampionSelection = GUICtrlCreateCombo("Champion", 215, 25, 200, 20)
+	GUICtrlSetData($iChampionSelection, $sListOfChampions)
 
-;~  If $iPing Then ; If a value greater than 0 was returned then display the following message.
-;~ 	 MsgBox($MB_SYSTEMMODAL, "", "The roundtrip-time took: " & $iPing & "ms.")
-;~  Else
-;~ 	 MsgBox($MB_SYSTEMMODAL, "", "An error occurred with @error value of: " & @error)
-;~  EndIf
+	GUISetState(@SW_SHOW)
 
 
-GUICreate("Champion Counter", 450, 500, @DesktopWidth / 2 + 200, @DesktopHeight / 2 - 400, -1, $WS_EX_TOPMOST)
-
-   $iPing = Ping("216.52.241.254")
-   GUICtrlCreateLabel("Ping:", 215, 5)
-   $iPingLabel = GUICtrlCreateLabel($iPing, 240, 5)
-   $iRefreshPing = 0
-
-   Local $iChampionSelection = GUICtrlCreateCombo("Champion", 215, 25, 200, 20)
-   GUICtrlSetData($iChampionSelection, $sListOfChampions)
-   $idListview = GUICtrlCreateListView("", 2, 2, 210, 425)
-   GUISetState(@SW_SHOW)
-
-;~    GUICtrlDelete($iPingLabel)
 
 
 	; Loop until the user exits.
-   While 1
-	  Switch GUIGetMsg()
-		 Case $GUI_EVENT_CLOSE
-			Exit
-		 Case $iChampionSelection
-			;~ 	Read inputs
-			Local $sChampion = GUICtrlRead($iChampionSelection)
-			If $sChampion <> "Champion" Then
-			   GetCounterInfo()
-			EndIf
-;~             Case $idBtn
-;~ 				If $sSourceXML == "" Or $sOrderID == "" Or $sConsumerDirectory == "" Then
-;~ 					MsgBox(0,"", "Fields cannot be empty")
-;~ 					GUISetState(@SW_DISABLE)
-;~ 					Main()
-;~ 					Exit
-;~ 				EndIf
-;~ 				Executes below code
-;~                 ExitLoop
-	  EndSwitch
-	  If ($iRefreshPing = 100) Then
-		 GUICtrlSetData($iPingLabel, Ping("216.52.241.254"))
-		 $iRefreshPing = 0
-	  EndIf
-	  $iRefreshPing+=1
-   WEnd
+    While 1
+        Switch GUIGetMsg()
+			Case $GUI_EVENT_MINIMIZE, $GUI_EVENT_MAXIMIZE, $GUI_EVENT_RESTORE
+			$aPos = WinGetPos($hMainGUI)
+			$iW = $aPos[2]
+			$iH = $aPos[3]
+            Case $GUI_EVENT_CLOSE
+                Exit
+			Case $iChampionSelection
+				;~ 	Read inputs
+				Local $sChampion = GUICtrlRead($iChampionSelection)
+				If $sChampion <> "Champion" Then
+					GetCounterInfo()
+				EndIf
+        EndSwitch
+    WEnd
 
 
 
@@ -115,13 +92,6 @@ EndFunc
 
 Func GetCounterInfo()
 
-;~     Local $sFile
-;~     GUICreate("_GetURLImage()", 320, 115)
-;~     $sFile = _GetURLImage("http://leagueoflegends.wikia.com/wiki/Category:Champion_squares?file=AatroxSquare.png", @TempDir)
-;~     If @error = 0 Then
-;~         0xFF0000($sFile, 0, 0, 320, 115, BitOR($SS_NOTIFY, $WS_GROUP, $WS_CLIPSIBLINGS)) ; Make Sure You Set The Correct Width & Height.
-;~     EndIf
-
 
 ;~ ;===Modify Champion selected for use in URL===
 	;Removes spaces and periods
@@ -146,17 +116,8 @@ Func GetCounterInfo()
 
 
 
-;~ 		For $i = 0 To UBound($aMasteryList) - 1
-;~ 			$aMasteryList[$i] = StringLeft($aMasteryList[$i], 4)
-;~ 		Next
 
-
-
-
-
-
-
-
+	$idListview = GUICtrlCreateListView("", 2, 2, 210, 425)
 
   ; Enable extended control styles
     _GUICtrlListView_SetExtendedListViewStyle($idListview, BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_SUBITEMIMAGES))
@@ -191,8 +152,8 @@ Func GetCounterInfo()
 
 
 
-;~ 	GUICtrlCreateLabel("Frequent Keystone Mastery: ",230, 50,50,40,)
-
+;~ 	GUICtrlCreateLabel("Frequent Keystone Mastery: ",230, 50,50,40, $SS_CENTERIMAGE)
+GUICtrlCreateLabel("Frequent Keystone Mastery: ", 200, 10, 150, 17)
 	$sFrequentKeystone = GetMasteryKeystoneInfo($aFrequentMasteryList)
 	If $sFrequentKeystone <> "" Then
 		GetPNGFromURL($sFrequentKeystone, 250, 150)
@@ -202,29 +163,6 @@ Func GetCounterInfo()
 	If $sMostWinKeystone <> "" Then
 		GetPNGFromURL($sMostWinKeystone, 250, 250)
 	EndIf
-;~ 	_ArrayDisplay($aFrequentMasteryList, "1D display")
-
-
-
-;~     ; Download the file in the background with the selected option of 'force a reload from the remote site.'
-;~     Local $hDownload = InetGet("https://raw.githubusercontent.com/Gravebot/Gravebot/master/web/images/leagueoflegends/champs/aatrox.png", $sFilePath, $INET_FORCERELOAD, $INET_DOWNLOADBACKGROUND)
-
-;~  ; Wait for the download to complete by monitoring when the 2nd index value of InetGetInfo returns True.
-;~     Do
-;~         Sleep(250)
-;~     Until InetGetInfo($hDownload, $INET_DOWNLOADCOMPLETE)
-
-;~     ; Retrieve the number of total bytes received and the filesize.
-;~     Local $iBytesSize = InetGetInfo($hDownload, $INET_DOWNLOADREAD)
-;~     Local $iFileSize = FileGetSize($sFilePath)
-;~    ; Close the handle returned by InetGet.
-;~     InetClose($hDownload)
-
-;~     ; Display details about the total number of bytes read and the filesize.
-;~     MsgBox($MB_SYSTEMMODAL, "", "The total download size: " & $iBytesSize & @CRLF & _
-;~             "The total filesize: " & $iFileSize)
-
-
 
 
 
@@ -232,11 +170,6 @@ Func GetCounterInfo()
     GUISetState(@SW_SHOW)
 
 
-
-
-
-
-;~ 	GUICtrlSetImage($image_pic, @ScriptDir&"\"&$sFilePath)
 
 
 

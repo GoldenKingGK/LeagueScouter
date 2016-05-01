@@ -2,57 +2,50 @@
 #include <GDIPlus.au3>
 #include <WindowsConstants.au3>
 
+
+Opt("GUIOnEventMode", 1)
+_GDIPlus_Startup()
+
 #include <Inet.au3>
 #include <String.au3>
 #include <Array.au3>
 #include <GUIConstantsEx.au3>
 #include <GuiListView.au3>
 #include <GuiImageList.au3>
+#include <WindowsConstants.au3>
 #include <GDIPlus.au3>
 #include <WinAPIFiles.au3>
 #include <StaticConstants.au3>
+$sListOfChampions = "Aatrox|Ahri|Akali|Alistar|Amumu|Anivia|Annie|Ashe|Aurelion Sol|Azir|Bard|Blitzcrank|Brand|Braum|Caitlyn|Cassiopeia|Cho'Gath|Corki|Darius|Diana|Dr. Mundo|Draven|Ekko|Elise|Evelynn|Ezreal|Fiddlesticks|Fiora|Fizz|Galio|Gangplank|Garen|Gnar|Gragas|Graves|Hecarim|Heimerdinger|Illaoi|Irelia|Janna|Jarvan IV|Jax|Jayce|Jhin|Jinx|Kalista|Karma|Karthus|Kassadin|Katarina|Kayle|Kennen|Kha'Zix|Kindred|Kog'Maw|LeBlanc|Lee Sin|Leona|Lissandra|Lucian|Lulu|Lux|Malphite|Malzahar|Maokai|Master Yi|Miss Fortune|Mordekaiser|Morgana|Nami|Nasus|Nautilus|Nidalee|Nocturne|Nunu|Olaf|Orianna|Pantheon|Poppy|Quinn|Rammus|Rek'Sai|Renekton|Rengar|Riven|Rumble|Ryze|Sejuani|Shaco|Shen|Shyvana|Singed|Sion|Sivir|Skarner|Sona|Soraka|Swain|Syndra|Tahm Kench|Talon|Taric|Teemo|Thresh|Tristana|Trundle|Tryndamere|Twisted Fate|Twitch|Udyr|Urgot|Varus|Vayne|Veigar|Vel'Koz|Vi|Viktor|Vladimir|Volibear|Warwick|Wukong|Xerath|Xin Zhao|Yasuo|Yorick|Zac|Zed|Ziggs|Zilean|Zyra"
 
-
-Opt("GUIOnEventMode", 1)
-_GDIPlus_Startup()
-
-Global Const $sListOfChampions = "Aatrox|Ahri|Akali|Alistar|Amumu|Anivia|Annie|Ashe|Aurelion Sol|Azir|Bard|Blitzcrank|Brand|Braum|Caitlyn|Cassiopeia|Cho'Gath|Corki|Darius|Diana|Dr. Mundo|Draven|Ekko|Elise|Evelynn|Ezreal|Fiddlesticks|Fiora|Fizz|Galio|Gangplank|Garen|Gnar|Gragas|Graves|Hecarim|Heimerdinger|Illaoi|Irelia|Janna|Jarvan IV|Jax|Jayce|Jhin|Jinx|Kalista|Karma|Karthus|Kassadin|Katarina|Kayle|Kennen|Kha'Zix|Kindred|Kog'Maw|LeBlanc|Lee Sin|Leona|Lissandra|Lucian|Lulu|Lux|Malphite|Malzahar|Maokai|Master Yi|Miss Fortune|Mordekaiser|Morgana|Nami|Nasus|Nautilus|Nidalee|Nocturne|Nunu|Olaf|Orianna|Pantheon|Poppy|Quinn|Rammus|Rek'Sai|Renekton|Rengar|Riven|Rumble|Ryze|Sejuani|Shaco|Shen|Shyvana|Singed|Sion|Sivir|Skarner|Sona|Soraka|Swain|Syndra|Tahm Kench|Talon|Taric|Teemo|Thresh|Tristana|Trundle|Tryndamere|Twisted Fate|Twitch|Udyr|Urgot|Varus|Vayne|Veigar|Vel'Koz|Vi|Viktor|Vladimir|Volibear|Warwick|Wukong|Xerath|Xin Zhao|Yasuo|Yorick|Zac|Zed|Ziggs|Zilean|Zyra"
-Global Const $SC_DRAGMOVE = 0xF012
-Global Const $W = -1
-Global Const $H = 500
-Global Const $hGUI = GUICreate("League Scouter", $W, $H, -1, -1, $WS_POPUP, $WS_EX_LAYERED)
-Global Const $hGUI_Child = GUICreate("", $W, $H, 0, 0, $WS_POPUP, $WS_EX_MDICHILD + $WS_EX_LAYERED + $WS_EX_TOOLWINDOW, $hGUI)
+Local Const $SC_DRAGMOVE = 0xF012
+Local Const $W = -1
+Local Const $H = 200
+Local Const $hGUI = GUICreate("GDI+ Test by UEZ 2011", $W, $H, -1, -1, $WS_POPUP, $WS_EX_LAYERED)
+Local Const $hGUI_Child = GUICreate("", $W, $H, 0, 0, $WS_POPUP, $WS_EX_MDICHILD + $WS_EX_LAYERED + $WS_EX_TOOLWINDOW, $hGUI)
 GUISetBkColor(0xABCDEF, $hGUI_Child)
 GUISwitch($hGUI_Child)
-Global Const $idButton = GUICtrlCreateButton("Exit", 250, 400, 100, 40)
+Local Const $idButton = GUICtrlCreateButton("Exit", 40, 20, 100, 40)
 GUICtrlSetOnEvent(-1, "_Exit")
-;~ Global Const $idLabel = GUICtrlCreateLabel("TEST LABEL HERE!!!", 110, 140, 180, 20)
-;~ GUICtrlSetFont(-1, 14, 400, 0, "Times New Roman", 3)
-;~ GUICtrlSetColor(-1, 0xF0F0FF)
-;~ GUICtrlSetBkColor(-1, -2)
-Local $iChampionSelection = GUICtrlCreateCombo("Champion", 220, 25, 150, 20)
-GUICtrlSetOnEvent($iChampionSelection, "_Do")
-GUICtrlSetData($iChampionSelection, $sListOfChampions)
-
-$idListview = GUICtrlCreateListView("", 5, 5, 210, 425)
-; Enable extended control styles
-;~ _GUICtrlListView_SetExtendedListViewStyle($idListview, BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_SUBITEMIMAGES))
-
-
+Local Const $idLabel = GUICtrlCreateLabel("TEST LABEL HERE!!!", 110, 140, 180, 20)
+GUICtrlSetFont(-1, 14, 400, 0, "Times New Roman", 3)
+GUICtrlSetColor(-1, 0xF0F0FF)
+GUICtrlSetBkColor(-1, -2)
 _WinAPI_SetLayeredWindowAttributes($hGUI_Child, 0xABCDEF, 0xFF)
+
+
+	Local $iChampionSelection = GUICtrlCreateCombo("Champion", 215, 25, 150, 20)
+	GUICtrlSetOnEvent($iChampionSelection, "_Do")
+	GUICtrlSetData($iChampionSelection, $sListOfChampions)
 GUISetState(@SW_SHOW, $hGUI_Child)
 GUISetState(@SW_SHOW, $hGUI)
 _SetGuiRoundCorners($hGUI, 40, False, True, True, False)
 
-Global Const $hGraphic = _GDIPlus_GraphicsCreateFromHWND($hGUI)
-Global $hBitmap = _CreateCustomBk($hGUI, 0x3399FF)
-Global $hContext = _GDIPlus_ImageGetGraphicsContext($hBitmap)
-Global $sChampion
-
-
-
-;~ _CreateCustomGroupPic($hContext, 100, 100, 200, 75, 0xff0000)
-;~ _GDIPlus_GraphicsDrawImageRect($hGraphic, $hBitmap, 0, 0, $W, $H)
+Local Const $hGraphic = _GDIPlus_GraphicsCreateFromHWND($hGUI)
+Local Const $hBitmap = _CreateCustomBk($hGUI, 0x550555)
+Local Const $hContext = _GDIPlus_ImageGetGraphicsContext($hBitmap)
+_CreateCustomGroupPic($hContext, 100, 100, 200, 75, 0xff0000)
+_GDIPlus_GraphicsDrawImageRect($hGraphic, $hBitmap, 0, 0, $W, $H)
 
 SetTransparentBitmap($hGUI, $hBitmap, 0xD0)
 
@@ -60,41 +53,17 @@ GUISetOnEvent(-3, "_Exit")
 
 GUIRegisterMsg($WM_LBUTTONDOWN, "_WM_LBUTTONDOWN")
 
-;~ While Sleep(2 ^ 16)
-;~ WEnd
+While Sleep(2 ^ 16)
 
+WEnd
+Local $sChampion
 
-
-	; Loop until the user exits.
-    While 1
-
-        Switch GUIGetMsg()
-			Case $GUI_EVENT_MINIMIZE, $GUI_EVENT_MAXIMIZE, $GUI_EVENT_RESTORE
-				$aPos = WinGetPos($hGUI)
-				$iW = $aPos[2]
-				$iH = $aPos[3]
-            Case $GUI_EVENT_CLOSE
-                Exit
-			Case $iChampionSelection
-				MsgBox(0,"","")
-				;~ 	Read inputs
-				$sChampion = GUICtrlRead($iChampionSelection)
-				If $sChampion <> "Champion" Then
-					GetCounterInfo($sChampion)
-				EndIf
-				MsgBox(0,"",$sChampion)
-;~             Case $idBtn
-;~ 				If $sSourceXML == "" Or $sOrderID == "" Or $sConsumerDirectory == "" Then
-;~ 					MsgBox(0,"", "Fields cannot be empty")
-;~ 					GUISetState(@SW_DISABLE)
-;~ 					Main()
-;~ 					Exit
-;~ 				EndIf
-;~ 				Executes below code
-;~                 ExitLoop
-        EndSwitch
-    WEnd
-
+Func _Do()
+	$sChampion = GUICtrlRead($iChampionSelection)
+	If $sChampion <> "Champion" Then
+		GetCounterInfo($sChampion)
+	EndIf
+EndFunc
 
 
 Func GetCounterInfo($sChampion)
@@ -112,30 +81,38 @@ Func GetCounterInfo($sChampion)
 	$sWeak = _INetGetSource('http://www.lolcounter.com/champions/' & $sChampion & '/weak')
 	$sStrong = _INetGetSource('http://www.lolcounter.com/champions/' & $sChampion & '/strong')
 	$sMostFrequentMastery = _INetGetSource('https://champion.gg/champion/' & $sChampion)
+
 	$aBetweenWeak = _StringBetween($sWeak, "a class='left' href='/champions/", "'><div")
 	$aBetweenStrong = _StringBetween($sStrong, "a class='left' href='/champions/", "'><div")
+
+
 	$aMasteryList = _StringBetween($sMostFrequentMastery, ' mastery-active" champion-tip api-type="masteries" api-primary-id="',  '" api-secondary-id="')
 
 
 
 
 
+	$idListview = GUICtrlCreateListView("", 2, 2, 210, 425)
+
+  ; Enable extended control styles
+    _GUICtrlListView_SetExtendedListViewStyle($idListview, BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_SUBITEMIMAGES))
 
 
 
-
-	_GDIPlus_Startup()
 	Local  $STM_SETIMAGE = 0x0172
 
-	Local $hBmpa = _GDIPlus_BitmapCreateFromMemory(InetRead("https://ddragon.leagueoflegends.com/cdn/6.8.1/img/champion/" & $sChampion & ".png"), True) ;to load an image from the net
-	;~ 	Local $hBmp = _GDIPlus_BitmapCreateFromMemory(InetRead("https://raw.githubusercontent.com/Gravebot/Gravebot/master/web/images/leagueoflegends/champs/" & StringLower($sChampion) & ".png"), True) ;to load an image from the net
-	$hBitmapa = _GDIPlus_BitmapCreateFromHBITMAP($hBmpa)
-	$iWidtha = _GDIPlus_ImageGetWidth($hBitmapa)
-	$iHeighta = _GDIPlus_ImageGetHeight($hBitmapa)
-	$idPica = GUICtrlCreatePic("", 250, 150, $iWidtha, $iHeighta)
-	_WinAPI_DeleteObject(GUICtrlSendMsg($idPica, $STM_SETIMAGE, $IMAGE_BITMAP, $hBmpa))
+
+	Local $hChampionBmp = _GDIPlus_BitmapCreateFromMemory(InetRead("https://ddragon.leagueoflegends.com/cdn/6.8.1/img/champion/" & $sChampion & ".png"), True) ;to load an image from the net
+	Local  $hChampionBitmap = _GDIPlus_BitmapCreateFromHBITMAP($hChampionBmp)
 
 
+	Local  $iWidth = _GDIPlus_ImageGetWidth($hChampionBitmap)
+	Local  $iHeight = _GDIPlus_ImageGetHeight($hChampionBitmap)
+	MsgBox(0,"","")
+	Local  $idChampionPic = GUICtrlCreatePic("", 250, 150, $iWidth, $iHeight)
+
+	MsgBox(0,"","")
+	_WinAPI_DeleteObject(GUICtrlSendMsg($idChampionPic, $STM_SETIMAGE, $IMAGE_BITMAP, $hChampionBmp))
 
 	Local $sMasteryURL = ""
 	Local $aFrequentMasteryList[10]
@@ -150,8 +127,8 @@ Func GetCounterInfo($sChampion)
 		$aMostWinsMasteryList[$i] = $aMasteryList[$i+5]
 	Next
 
-	MsgBox(0,"", $sChampion)
-	_ArrayDisplay($aBetweenWeak, "1D display")
+
+
 ;~ 	GUICtrlCreateLabel("Frequent Keystone Mastery: ",230, 50,50,40, $SS_CENTERIMAGE)
 GUICtrlCreateLabel("Frequent Keystone Mastery: ", 200, 10, 150, 17)
 	$sFrequentKeystone = GetMasteryKeystoneInfo($aFrequentMasteryList)
@@ -165,7 +142,14 @@ GUICtrlCreateLabel("Frequent Keystone Mastery: ", 200, 10, 150, 17)
 	EndIf
 
 
-; Load images
+
+
+
+
+
+
+
+    ; Load images
 	$hImage = _GUIImageList_Create()
     _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview), 0xFF0000, 16, 16))
     _GUIImageList_Add($hImage, _GUICtrlListView_CreateSolidBitMap(GUICtrlGetHandle($idListview), 0x00FF00, 16, 16))
@@ -184,21 +168,8 @@ GUICtrlCreateLabel("Frequent Keystone Mastery: ", 200, 10, 150, 17)
 		For $j = 0 To UBound($aBetweenStrong) - 1
 			_GUICtrlListView_AddSubItem($idListview, $j, $aBetweenStrong[$j], 1, 1)
 		Next
-;~ 		_GUICtrlListView_AddSubItem($idListview, 0, "Row 1: Col 3", 2, 2)
-;~ 		_GUICtrlListView_AddItem($idListview, "Row 2: Col 1", 1)
-;~ 		_GUICtrlListView_AddSubItem($idListview, 1, "Row 2: Col 2", 1, 2)
-;~ 		_GUICtrlListView_AddItem($idListview, "Row 3: Col 1", 2)
 	Next
-
 EndFunc
-
-
-
-
-
-
-
-
 
 Func GetMasteryKeystoneInfo($aMasteryList)
 
@@ -242,37 +213,57 @@ Func GetMasteryKeystoneInfo($aMasteryList)
 	Return $sMasteryURL
 EndFunc
 
-
-
-
-
-
-
-
-
-
 Func GetPNGFromURL($sMasteryURL, $iPosX, $iPosY)
 	Local  $STM_SETIMAGE = 0x0172
 	Local $hBmp = _GDIPlus_BitmapCreateFromMemory(InetRead($sMasteryURL), True) ;to load an image from the net
-	Global  $hBitmap = _GDIPlus_BitmapCreateFromHBITMAP($hBmp)
-	Global  $iWidth = _GDIPlus_ImageGetWidth($hBitmap)
-	Global  $iHeight = _GDIPlus_ImageGetHeight($hBitmap)
-	Global  $idPic = GUICtrlCreatePic("", $iPosX, $iPosY, $iWidth, $iHeight)
+	Local  $hBitmap = _GDIPlus_BitmapCreateFromHBITMAP($hBmp)
+	Local  $iWidth = _GDIPlus_ImageGetWidth($hBitmap)
+	Local  $iHeight = _GDIPlus_ImageGetHeight($hBitmap)
+	Local  $idPic = GUICtrlCreatePic("", $iPosX, $iPosY, $iWidth, $iHeight)
 	_WinAPI_DeleteObject(GUICtrlSendMsg($idPic, $STM_SETIMAGE, $IMAGE_BITMAP, $hBmp))
 EndFunc
 
 
+Func _GetURLImage($sURL, $sDirectory = @ScriptDir)
+    Local $hDownload, $sFile
+    $sFile = StringRegExpReplace($sURL, "^.*/", "")
+    If @error Then
+        Return SetError(1, 0, $sFile)
+    EndIf
+    If StringRight($sDirectory, 1) <> "\" Then
+        $sDirectory = $sDirectory & "\"
+    EndIf
+    $sDirectory = $sDirectory & $sFile
+    If FileExists($sDirectory) Then
+        Return $sDirectory
+    EndIf
+    $hDownload = InetGet($sURL, $sDirectory, 17, 1)
+    While InetGetInfo($hDownload, 2) = 0
+        If InetGetInfo($hDownload, 4) <> 0 Then
+            InetClose($hDownload)
+            Return SetError(1, 0, $sDirectory)
+        EndIf
+        Sleep(105)
+    WEnd
+    InetClose($hDownload)
+    Return $sDirectory
+EndFunc   ;==>_GetURLImage
 
 
 
 
-Func _do()
-	;~ 	Read inputs
-	Local $sChampion = GUICtrlRead($iChampionSelection)
-	If $sChampion <> "Champion" Then
-		GetCounterInfo($sChampion)
-	EndIf
-EndFunc ;==>_Exit
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -298,7 +289,7 @@ Func _CreateCustomBk($hGUI, $hexColor, $alpha = "0xAA")
     Local $hBrush = _GDIPlus_BrushCreateSolid($alpha & Hex($hexColor, 6))
     _GDIPlus_GraphicsFillRect($hGraphics, 0, 0, $iWidth, $iHeight, $hBrush)
     _GDIPlus_GraphicsFillRect($hGraphics, 2, 2, $iWidth - 6, $iHeight - 6, $hBrush)
-;~     _GDIPlus_BrushSetSolidColor($hBrush, 0x22FFFFFF)
+    _GDIPlus_BrushSetSolidColor($hBrush, 0x22FFFFFF)
     Local $iTimes = Round($iWidth / 50)
     Local $aPoints[5][2]
     $aPoints[0][0] = 4
